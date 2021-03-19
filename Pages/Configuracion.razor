@@ -1,16 +1,19 @@
 @page "/configurando"
+@using Tarea7_Vacunas.Models 
 
 <h3>Registro de vacunas</h3>
 
-<h1 style=" text-align: center; color: white; height: 65px" >Vacunas</h1>
-    
-<div class="container">
+<h1 style=" text-align: center; color: white; height: 65px">Vacunas</h1>
 
+<div class="container">
+    <label> <b>ID:</b></label>
+    <input style="width: 35%;" type="text" class="form-control" placeholder="Escriba un valor para identificar la vacuna ">
+    <br>
     <label> <b>Marca (Nombre):</b></label>
-        <input style="width: 35%;" type="text" class="form-control" placeholder="Digite el nombre de la vacuna. ">
-    <br>  
+    <input style="width: 35%;" type="text" class="form-control" placeholder="Digite el nombre de la vacuna. ">
+    <br>
     <label> <b>Cantidad:</b></label>
-        <input style="width: 35%;" type="text" class="form-control"  placeholder="Cantidad de vacunas, Eje: 10 ">
+    <input style="width: 35%;" type="text" class="form-control" placeholder="Cantidad de vacunas, Ejemplo: 10 ">
     <br>
 
     <button class="btn btn-primary" onclick="EnviarDatos">Registrar</button>
@@ -21,7 +24,7 @@
 <div class="row">
     <div class="col-md-3"></div>
     <div class="col-md-6">
-        <table  class="table table-dark table-borderless">
+        <table class="table table-dark table-borderless">
             <thead>
                 <tr>
                     <th>Id</th>
@@ -31,14 +34,14 @@
             </thead>
             <tbody>
 
-           @*     @foreach (inventario vcc in Getvacuna())
-                { *@ 
-                    <tr>
-                        <td>@*vcc.id*@ </td>
-                        <td>@*vcc.marca*@ </td>
-                        <td>@*vcc.cantidad*@ </td>
-                    </tr>
-             @*  }*@ 
+                @foreach (Vacunas vac in GetVacunas())
+                { 
+                <tr>
+                    <td>@vac.VacunasId </td>
+                    <td>@vac.Nombre</td>
+                    <td>@vac.Cantidad </td>
+                </tr>
+                }
 
             </tbody>
         </table>
@@ -46,48 +49,33 @@
     <div class="col-md-4"></div>
 </div>
 
-@code{
+@code{@* Creando los campos que almacenarán los datos *@string idvacuna = "", nombre = "", cantidad = "";
 
-@* Creando los campos que almacenarán los datos *@
-    string  idvacuna = "", nombre = "", cantidad = "";
+        public List<Vacunas> GetVacunas() => new registrovacunaContext().Vacunas.ToList();
 
-    public List<inventario> GetInventarios() => new Contexto().Inventarios.ToList();
-   
-    public List<inventario> vacunas;
+        public List<Vacunas> vacunas;
 
-    protected override void OnInitialized()
-    {
-        vacunas = GetInventarios();
-        
-    }
-
-
-    public void EnviarDatos()
-    {
-
-        Modelos.Vacunados vacu = new Modelos.Vacunados();
-        vacu.idvacuna = idvacuna;
-        vacu.Nombre = nombre;
-        vacu.cantidad = cantidad;
-     
-        using (Contexto context = new Contexto())
+        protected override void OnInitialized()
         {
-            context.Add(vacu);
-            context.SaveChanges();
+            vacunas = GetVacunas();
         }
 
 
-    }
+        public void EnviarDatos()
+        {
 
- public void ValidarDatos()
-    {
-        
-        if(vacuna.Length > 0){            
-            Registrar(vacuna);
-        }else{
-            valor = 5;
+            Models.Vacunas vacu = new Models.Vacunas();
+            vacu.VacunasId = int.Parse(idvacuna);
+            vacu.Nombre = nombre;
+            vacu.Cantidad = int.Parse(cantidad);
+
+            using (registrovacunaContext context = new registrovacunaContext())
+            {
+                context.Add(vacu);
+                context.SaveChanges();
+            }
+
         }
-    }
 
-    
-} 
+
+}
