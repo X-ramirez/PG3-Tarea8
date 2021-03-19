@@ -1,3 +1,93 @@
-@page "/Configuracion"
+@page "/configurando"
 
-<h1>Hello, world!</h1>
+<h3>Registro de vacunas</h3>
+
+<h1 style=" text-align: center; color: white; height: 65px" >Vacunas</h1>
+    
+<div class="container">
+
+    <label> <b>Marca (Nombre):</b></label>
+        <input style="width: 35%;" type="text" class="form-control" placeholder="Digite el nombre de la vacuna. ">
+    <br>  
+    <label> <b>Cantidad:</b></label>
+        <input style="width: 35%;" type="text" class="form-control"  placeholder="Cantidad de vacunas, Eje: 10 ">
+    <br>
+
+    <button class="btn btn-primary" onclick="EnviarDatos">Registrar</button>
+    <button class="btn btn-success" onclick="Update">Actualizar</button>
+</div>
+
+<br>
+<div class="row">
+    <div class="col-md-3"></div>
+    <div class="col-md-6">
+        <table  class="table table-dark table-borderless">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Marca</th>
+                    <th>Cantidad</th>
+                </tr>
+            </thead>
+            <tbody>
+
+           @*     @foreach (inventario vcc in Getvacuna())
+                { *@ 
+                    <tr>
+                        <td>@*vcc.id*@ </td>
+                        <td>@*vcc.marca*@ </td>
+                        <td>@*vcc.cantidad*@ </td>
+                    </tr>
+             @*  }*@ 
+
+            </tbody>
+        </table>
+    </div>
+    <div class="col-md-4"></div>
+</div>
+
+@code{
+
+@* Creando los campos que almacenarán los datos *@
+    string  idvacuna = "", nombre = "", cantidad = "";
+
+    public List<inventario> GetInventarios() => new Contexto().Inventarios.ToList();
+   
+    public List<inventario> vacunas;
+
+    protected override void OnInitialized()
+    {
+        vacunas = GetInventarios();
+        
+    }
+
+
+    public void EnviarDatos()
+    {
+
+        Modelos.Vacunados vacu = new Modelos.Vacunados();
+        vacu.idvacuna = idvacuna;
+        vacu.Nombre = nombre;
+        vacu.cantidad = cantidad;
+     
+        using (Contexto context = new Contexto())
+        {
+            context.Add(vacu);
+            context.SaveChanges();
+        }
+
+
+    }
+
+ public void ValidarDatos()
+    {
+        
+        if(vacuna.Length > 0){            
+            Registrar(vacuna);
+        }else{
+            valor = 5;
+        }
+    }
+
+    
+} 
