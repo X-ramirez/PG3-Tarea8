@@ -1,0 +1,210 @@
+
+
+@page "/Registrar"
+
+
+@using System.Net.Http.Json
+@using System.Net.Http
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.AspNetCore.Components.Routing
+@using Microsoft.AspNetCore.Components.Web.Virtualization
+@using Tarea7_Vacunas.Models
+
+
+
+<h1><center>Registro</center></h1>
+
+
+<div class="input-group w-50">
+    <label for="cedula" class="input-group-text">Cedula</label>
+    <input id="cedula" type="text" @bind-value="Cedula_" class="form-control" maxlength="11">
+    <div class="input-group-append">
+        <button @onclick="CedReal" class="btn btn-success">Buscar</button>
+    </div>
+</div>
+@if (fallo != "")
+{
+    <div class="alert alert-danger" role="alert">
+        @fallo
+    </div>}
+@if (paciente != null)
+{
+    <EditForm Model="paciente" OnValidSubmit="vacunadoValido">
+        <DataAnnotationsValidator />
+
+        <div class="form-group">
+            <label for="nombre">Nombre</label>
+            <input type="text" @bind="paciente.Nombre" class="form-control">
+        </div>
+        <div class="form-group">
+            <label for="apellido">Apellido</label>
+            <input type="text" @bind="paciente.Apellido" class="form-control">
+        </div>
+        <div class="form-group">
+            <label for="tel">Telefono</label>
+            <input type="text" @bind="paciente.Telefono" class="form-control" id="tel" placeholder="000-000-0000">
+        </div>
+        <div class="form-group">
+            <label for="nac">Fecha Nacimiento</label>
+            <input type="text" @bind="paciente.FechaNacimiento" class="form-control">
+        </div>
+
+
+        <div class="form-group">
+            <label for="vac">Vacuna</label>
+            <select class="form-control" @bind="paciente.VacunasId" id="vac" aria-label="Default select example" readonly>
+                <option selected>Vacuna Recibida</option>
+                @foreach (var vac in db.Vacunas)
+                {
+                    <option value="@vac.VacunasId">@vac.Nombre</option>
+}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="prov">Provincia</label>
+            <select class="form-control" @bind="paciente.ProvinciasId" id="prov" aria-label="Default select example" readonly>
+                <option selected>Provincia</option>
+                @foreach (var prov in db.Direccion)
+                {
+                    <option value="@prov.ProvinciasId">@prov.Provincia</option>
+}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="fecha2">Fecha Vacunacion</label>
+            <input type="date" class="form-control" id="fecha2" name="Fecha Vacuna">
+        </div>
+
+        <center><button type="Submit" class="btn btn-success" name="action">Agregar Vacunado</button></center>
+        }
+
+    </EditForm>
+    @code { private string Cedula_ = "";
+        private string ced = "";
+        private string fallo = "";
+
+        registrovacunaContext db = new registrovacunaContext();
+        private Paciente paciente = new Paciente();
+        private bool agregada = false;
+        private bool newper = true;
+        HttpClient http = new HttpClient();
+        Informacion Usuario = null;
+
+        async Task CedReal()
+        {
+
+            ced = Cedula_.Replace("-", "").Replace(" ", "");
+
+            Usuario = await http.GetFromJsonAsync<Informacion>("https://api.adamix.net/apec/cedula/" + ced);
+            if (Usuario.ok)
+            {
+            }
+            else
+            {
+                fallo = "Cedula no encontrada.";
+            }
+
+            metCedula();
+        }
+
+        private void metCedula()
+        {
+            try
+            {
+                paciente = db.Paciente.Where(x => x.Cedula == ced).First();
+                agregada = true;
+                newper = false;
+                fallo = "";
+            }
+            catch (InvalidOperationException ex)
+            {
+                GetApi();
+            }
+        }
+
+        public class Informacion
+        {
+            public string Cedula { get; set; }
+            public string Nombres { get; set; }
+            public string Apellido1 { get; set; }
+            public string Apellido2 { get; set; }
+            public string FechaNacimiento { get; set; }
+            public string LugarNacimiento { get; set; }
+            public int IDCategoria { get; set; }
+            public string IdSexo { get; set; }
+            public string IdEstadoCivil { get; set; }
+            public int IdOcupacion { get; set; }
+            public int IDNacionalidad { get; set; }
+            public int IDMunicipio { get; set; }
+            public int IDColegio { get; set; }
+            public object IDCausaCancelacion { get; set; }
+            public string IDEstatus { get; set; }
+            public object EstatusCedulaAzul { get; set; }
+            public object CedulaAnterior { get; set; }
+            public string mun_ced { get; set; }
+            public string seq_ced { get; set; }
+            public string ver_ced { get; set; }
+            public object V2004 { get; set; }
+            public object V2008 { get; set; }
+            public object V2012 { get; set; }
+            public object V2016 { get; set; }
+            public object PLD { get; set; }
+            public object PRD { get; set; }
+            public object PRSC { get; set; }
+            public object PRM { get; set; }
+            public object Multiplicador_NombreCompleto { get; set; }
+            public object Multiplicador_Cedula { get; set; }
+            public object Simpatia_Descripcion { get; set; }
+            public object Ilocalizable { get; set; }
+            public object Apodo { get; set; }
+            public object PadronLF { get; set; }
+            public bool ok { get; set; }
+            public string foto { get; set; }
+
+        }
+
+
+        private async void GetApi()
+        {
+            string api = $"https://api.adamix.net/apec/cedula/{ced}";
+            try
+            {
+                Informacion info = await http.GetFromJsonAsync<Informacion>(api);
+                Validacion(info);
+            }
+            catch (InvalidOperationException ex)
+            {
+                paciente = new Paciente();
+            }
+
+            fallo = "";
+            StateHasChanged();
+        }
+
+        public void Validacion(Informacion info)
+        {
+            string nombre = info.Nombres;
+            string apellido = info.Apellido1 + " " + info.Apellido2;
+            string fechadeNacimiento = info.FechaNacimiento;
+
+            paciente = new Paciente
+            {
+                Cedula = Cedula_,
+                Nombre = nombre,
+                Apellido = apellido,
+                FechaNacimiento = fechadeNacimiento,
+            };
+
+        }
+        private void vacunadoValido()
+        {
+            if (newper)
+            {
+                db.Add(paciente);
+            }
+
+            db.SaveChanges();
+        } }}

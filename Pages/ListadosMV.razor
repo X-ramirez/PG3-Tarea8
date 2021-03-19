@@ -1,0 +1,39 @@
+@page "/ListadosMV"
+@using Tarea7_Vacunas.Models
+
+<h1>Listado de Vacunas.</h1>
+<h1>Listado de Vacunas por Provincia</h1>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Nombre de la Vacuna</th>
+            <th>Cantidad de Vacunados</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (Vacunas vac in GetVacunas())
+        {
+            <tr>
+                @if (int.Parse(amount) != vac.VacunasId)
+                {
+                    <td>@vac.Nombre</td>
+                    <td>@x(vac.VacunasId.ToString())</td>
+                    amount = vac.VacunasId.ToString();
+                }
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code { List<Vacunas> GetVacunas() => new registrovacunaContext().Vacunas.ToList();
+
+    registrovacunaContext db = new registrovacunaContext();
+
+    int count;
+    string amount;
+
+    public int x(string data)
+    {
+        return count = db.Paciente.Where(p => p.VacunasId == int.Parse(data)).Count();
+    } }

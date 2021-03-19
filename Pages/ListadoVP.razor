@@ -1,0 +1,67 @@
+@page "/ListadoVP"
+@using Tarea7_Vacunas.Models
+
+<h1>Listado de Vacunas por Provincia</h1>
+<p>Insertar ID de la Provincia</p>
+<input @bind-value="@SearchID" />
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Nombre:</th>
+            <th>Apellido:</th>
+            <th>Telefono:</th>
+            <th>Fecha de Nacimiento:</th>
+            <th>Vacuna:</th>
+            <th>Provincia:</th>
+            <th>Fecha Vacuna 1:</th>
+            <th>Fecha Vacuna 2:</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (SearchID != 0)
+        {
+@foreach (Paciente pas in SearchProvincia())
+{
+<tr>
+    <td>@pas.Nombre</td>
+    <td>@pas.Apellido</td>
+    <td>@pas.Telefono</td>
+    <td>@pas.FechaNacimiento</td>
+    <td>@pas.VacunasId</td>
+    <td>@pas.ProvinciasId</td>
+    <td>@pas.FechaPrimeraVacuna</td>
+    <td>@pas.FechaSegundaVacuna</td>
+</tr>}           }
+    </tbody>
+</table>
+<p>Inserte aqui para saber la ID de su provincia</p>
+<input @bind-value="@SearchProv" />
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Nombre Provincia:</th>
+            <th>ID:</th>
+            <th>Sector:</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (SearchProv != "")
+        {
+@foreach (Direccion dir in SearchName())
+{
+        <tr>
+            <td>@dir.Provincia</td>
+            <td>@dir.ProvinciasId</td>
+            <td>@dir.Sector</td>
+        </tr>
+}      }
+    </tbody>
+</table>
+@code {
+    int SearchID = 0;
+    String SearchProv = "";
+
+
+    List<Paciente> SearchProvincia() => new registrovacunaContext().Paciente.Where(p => p.ProvinciasId == SearchID).ToList();
+    List<Direccion> SearchName() => new registrovacunaContext().Direccion.Where(p => p.Provincia == SearchProv).ToList();}

@@ -1,0 +1,61 @@
+@page "/Consultar"
+@using Tarea7_Vacunas.Models
+
+<h1>Consulta de Vacunados</h1>
+<p>Filtro de Busqueda Nombre:</p>
+<input @bind-value="@SearchNom" />
+<p>Filtro de Busqueda Apellido:</p>
+<input @bind-value="@SearchApe" />
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Nombre:</th>
+            <th>Apellido:</th>
+            <th>Telefono:</th>
+            <th>Fecha de Nacimiento:</th>
+            <th>Vacuna:</th>
+            <th>Provincia:</th>
+            <th>Fecha Vacuna 1:</th>
+            <th>Fecha Vacuna 2:</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (SearchNom != "")
+        {
+    @foreach (Paciente pas in SearchPacientesNom())
+    {
+    <tr>
+        <td>@pas.Nombre</td>
+        <td>@pas.Apellido</td>
+        <td>@pas.Telefono</td>
+        <td>@pas.FechaNacimiento</td>
+        <td>@pas.VacunasId</td>
+        <td>@pas.ProvinciasId</td>
+        <td>@pas.FechaPrimeraVacuna</td>
+        <td>@pas.FechaSegundaVacuna</td>
+    </tr>} }
+                else if (SearchApe != "")
+                {
+    @foreach (Paciente pas in SearchPacientesApe())
+    {
+    <tr>
+        <td>@pas.Nombre</td>
+        <td>@pas.Apellido</td>
+        <td>@pas.Telefono</td>
+        <td>@pas.FechaNacimiento</td>
+        <td>@pas.VacunasId</td>
+        <td>@pas.ProvinciasId</td>
+        <td>@pas.FechaPrimeraVacuna</td>
+        <td>@pas.FechaSegundaVacuna</td>
+    </tr>}
+        }
+
+    </tbody>
+    </table>
+
+@code {
+    String SearchNom = "";
+    String SearchApe = "";
+    List<Paciente> SearchPacientesNom() => new registrovacunaContext().Paciente.Where(p => p.Nombre == SearchNom).ToList();
+    List<Paciente> SearchPacientesApe() => new registrovacunaContext().Paciente.Where(p => p.Apellido == SearchApe).ToList(); }
