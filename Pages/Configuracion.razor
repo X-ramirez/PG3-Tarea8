@@ -7,17 +7,18 @@
 
 <div class="container">
     <label> <b>ID:</b></label>
-    <input style="width: 35%;" type="text" class="form-control" placeholder="Escriba un valor para identificar la vacuna ">
+    <input style="width: 35%;" type="text" class="form-control" @bind-value="@idvacuna" placeholder="Escriba un valor para identificar la vacuna ">
     <br>
     <label> <b>Marca (Nombre):</b></label>
-    <input style="width: 35%;" type="text" class="form-control" placeholder="Digite el nombre de la vacuna. ">
+    <input style="width: 35%;" type="text" class="form-control" @bind-value="@nom" placeholder="Digite el nombre de la vacuna. ">
     <br>
     <label> <b>Cantidad:</b></label>
-    <input style="width: 35%;" type="text" class="form-control" placeholder="Cantidad de vacunas, Ejemplo: 10 ">
+    <input style="width: 35%;" type="text" class="form-control" @bind-value="@cant" placeholder="Cantidad de vacunas, Ejemplo: 10 ">
     <br>
 
-    <button class="btn btn-primary" onclick="EnviarDatos">Registrar</button>
-    <button class="btn btn-success" onclick="Update">Actualizar</button>
+    <button class="btn btn-primary" @onclick="EnviarDatos">Registrar</button>
+    <button class="btn btn-success" @onclick="Update">Actualizar</button>
+    <p>@estado</p>
 </div>
 
 <br>
@@ -49,33 +50,43 @@
     <div class="col-md-4"></div>
 </div>
 
-@code{@* Creando los campos que almacenarán los datos *@string idvacuna = "", nombre = "", cantidad = "";
+@code{
+    public int idvacuna;
+    public string nom = "";
+    public int cant;
+    public string estado = "Nada enviado aun.";
 
-        public List<Vacunas> GetVacunas() => new registrovacunaContext().Vacunas.ToList();
+    public List<Vacunas> GetVacunas() => new registrovacunaContext().Vacunas.ToList();
 
-        public List<Vacunas> vacunas;
+    public List<Vacunas> vacunas;
 
-        protected override void OnInitialized()
+    protected override void OnInitialized()
+    {
+        vacunas = GetVacunas();
+    }
+
+
+    public void EnviarDatos()
+    {
+
+        var context = new registrovacunaContext();
+        estado = "enviando...";
+        var vacuna = new Vacunas
         {
-            vacunas = GetVacunas();
-        }
+            VacunasId = idvacuna,
+            Nombre = nom,
+            Cantidad = cant
+        };
 
+        context.Add(vacuna);
+        context.SaveChanges();
+        estado = "Datos enviados.";
+    }
 
-        public void EnviarDatos()
-        {
-
-            Models.Vacunas vacu = new Models.Vacunas();
-            vacu.VacunasId = int.Parse(idvacuna);
-            vacu.Nombre = nombre;
-            vacu.Cantidad = int.Parse(cantidad);
-
-            using (registrovacunaContext context = new registrovacunaContext())
-            {
-                context.Add(vacu);
-                context.SaveChanges();
-            }
-
-        }
+    public void Update()
+    {
+        vacunas = GetVacunas();
+    }
 
 
 }
