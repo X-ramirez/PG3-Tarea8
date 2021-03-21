@@ -249,7 +249,15 @@
         {
             if (newper)
             {
-                db.Add(paciente);
+                var addvac = db.Vacunas.SingleOrDefault(v => v.VacunasId == paciente.VacunasId);
+                if (addvac != null)
+                {
+                     if (addvac.Cantidad > 0)
+                    {
+                        addvac.Cantidad = addvac.Cantidad - 1;
+                        db.Add(paciente);
+                    }
+                }
             } else
             {
                 var pers = db.Paciente.Where(p => p.Nombre == nombre).First();
