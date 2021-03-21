@@ -1,3 +1,57 @@
 @page "/ListadosVSZ"
+@using Tarea7_Vacunas.Models
 
-<h1>Hello, world!</h1>
+<h1>Busqueda por Signo Zodiaco</h1>
+
+<select class="form-control selectpicker" @bind="Zodiac">
+    <option value="Aries">Aries</option>
+    <option value="Libra">Libra</option>
+    <option value="Tauro">Tauro</option>
+    <option value="Escorpio">Escorpio</option>
+    <option value="Géminis">Géminis</option>
+    <option value="Sagitario">Sagitario</option>
+    <option value="Cáncer">Cáncer</option>
+    <option value="Capricornio">Capricornio</option>
+    <option value="Leo">Leo</option>
+    <option value="Acuario">Acuario</option>
+    <option value="Virgo">Virgo</option>
+    <option value="Piscis">Piscis</option>
+</select>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Signo Zodiaco:</th>
+            <th>Nombre:</th>
+            <th>Apellido:</th>
+            <th>Telefono:</th>
+            <th>Fecha de Nacimiento:</th>
+            <th>Vacuna:</th>
+            <th>Provincia:</th>
+            <th>Fecha Vacuna 1:</th>
+            <th>Fecha Vacuna 2:</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Zodiac != "")
+        {
+     @foreach (Paciente pas in SearchPaciente())
+     {
+        <tr>
+            <td>@pas.SignoDelZodiaco</td>
+            <td>@pas.Nombre</td>
+            <td>@pas.Apellido</td>
+            <td>@pas.Telefono</td>
+            <td>@pas.FechaNacimiento</td>
+            <td>@pas.VacunasId</td>
+            <td>@pas.ProvinciasId</td>
+            <td>@pas.FechaPrimeraVacuna</td>
+            <td>@pas.FechaSegundaVacuna</td>
+        </tr>} }
+    </tbody>
+     </table>
+
+@code { 
+    String Zodiac;
+    List<Paciente> SearchPaciente() => new registrovacunaContext().Paciente.Where(p => p.SignoDelZodiaco == Zodiac).Where(p => p.Estado == "Activo").ToList();
+}
