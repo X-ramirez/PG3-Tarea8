@@ -32,59 +32,61 @@
     </div>}
 @if (paciente != null)
 {
-    <EditForm Model="paciente" OnValidSubmit="vacunadoValido">
-        <DataAnnotationsValidator />
+<EditForm Model="paciente" OnValidSubmit="vacunadoValido">
+    <DataAnnotationsValidator />
 
-        <div class="form-group">
-            <label for="nombre">Nombre</label>
-            <input type="text" @bind="paciente.Nombre" class="form-control">
-        </div>
-        <div class="form-group">
-            <label for="apellido">Apellido</label>
-            <input type="text" @bind="paciente.Apellido" class="form-control">
-        </div>
-        <div class="form-group">
-            <label for="tel">Telefono</label>
-            <input type="text" @bind="paciente.Telefono" class="form-control" id="tel" placeholder="000-000-0000">
-        </div>
-        <div class="form-group">
-            <label for="nac">Fecha Nacimiento</label>
-            <input type="text" @bind="paciente.FechaNacimiento" class="form-control">
-        </div>
+    <div class="form-group">
+        <label for="nombre">Nombre</label>
+        <input type="text" @bind="paciente.Nombre" class="form-control">
+    </div>
+    <div class="form-group">
+        <label for="apellido">Apellido</label>
+        <input type="text" @bind="paciente.Apellido" class="form-control">
+    </div>
+    <div class="form-group">
+        <label for="tel">Telefono</label>
+        <input type="text" @bind="paciente.Telefono" class="form-control" id="tel" placeholder="000-000-0000">
+    </div>
+    <div class="form-group">
+        <label for="nac">Fecha Nacimiento</label>
+        <input type="text" @bind="paciente.FechaNacimiento" class="form-control">
+    </div>
 
 
-        <div class="form-group">
-            <label for="vac">Vacuna</label>
-            <select class="form-control" @bind="paciente.VacunasId" id="vac" aria-label="Default select example" readonly>
-                <option selected>Vacuna Recibida</option>
-                @foreach (var vac in db.Vacunas)
-                {
-                    <option value="@vac.VacunasId">@vac.Nombre</option>
-}
-            </select>
-        </div>
-        <div class="form-group">
-            <label for="prov">Provincia</label>
-            <select class="form-control" @bind="paciente.ProvinciasId" id="prov" aria-label="Default select example" readonly>
-                <option selected>Provincia</option>
-                @foreach (var prov in db.Direccion)
-                {
-                    <option value="@prov.ProvinciasId">@prov.Provincia</option>
-}
-            </select>
-        </div>
-        <div class="form-group">
-            <label for="fecha2">Fecha Vacunacion</label>
-            <input type="date" class="form-control" id="fecha2" name="Fecha Vacuna">
-        </div>
+    <div class="form-group">
+        <label for="vac">Vacuna</label>
+        <select class="form-control" @bind="paciente.VacunasId" id="vac" aria-label="Default select example" readonly>
+            <option selected>Vacuna Recibida</option>
+            @foreach (var vac in db.Vacunas)
+            {
+<option value="@vac.VacunasId">@vac.Nombre</option>}
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="prov">Provincia</label>
+        <select class="form-control" @bind="paciente.ProvinciasId" id="prov" aria-label="Default select example" readonly>
+            <option selected>Provincia</option>
+            @foreach (var prov in db.Direccion)
+            {
+<option value="@prov.ProvinciasId">@prov.Provincia</option>}
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="fecha2">Fecha Vacunacion</label>
+        <input type="date" class="form-control" id="fecha" @bind="fechavacuna" name="Fecha Vacuna">
+    </div>
 
-        <center><button type="Submit" class="btn btn-success" name="action">Agregar Vacunado</button></center>
-        }
+    <center><button type="Submit" class="btn btn-success" name="action">Agregar Vacunado</button></center>
+    
 
-    </EditForm>
-    @code { private string Cedula_ = "";
+</EditForm>
+    @code { 
+        private string Cedula_ = "";
         private string ced = "";
         private string fallo = "";
+        public string nombre;
+        public string telefono;
+        public DateTime fechavacuna;
 
         registrovacunaContext db = new registrovacunaContext();
         private Paciente paciente = new Paciente();
@@ -166,6 +168,46 @@
 
         }
 
+        public string signo(int dia, int mes)
+        {
+            if ((dia >= 21 && mes == 3) || (dia <= 20 && mes == 4))
+                return "Aries";
+
+            if ((dia >= 24 && mes == 9) || (dia <= 23 && mes == 10))
+                return "Libra";
+
+            if ((dia >= 21 && mes == 4) || (dia <= 21 && mes == 5))
+                return "Tauro";
+
+            if ((dia >= 24 && mes == 10) || (dia <= 22 && mes == 11))
+                return "Escorpio";
+
+            if ((dia >= 22 && mes == 5) || (dia <= 21 && mes == 6))
+                return "Géminis";
+
+            if ((dia >= 23 && mes == 11) || (dia <= 21 && mes == 12))
+                return "Sagitario";
+
+            if ((dia >= 21 && mes == 6) || (dia <= 23 && mes == 7))
+                return "Cáncer";
+
+            if ((dia >= 22 && mes == 12) || (dia <= 20 && mes == 1))
+                return "Capricornio";
+
+            if ((dia >= 24 && mes == 7) || (dia <= 23 && mes == 8))
+                return "Leo";
+
+            if ((dia >= 21 && mes == 1) || (dia <= 19 && mes == 2))
+                return "Acuario";
+
+            if ((dia >= 24 && mes == 8) || (dia <= 23 && mes == 9))
+                return "Virgo";
+
+            if ((dia >= 20 && mes == 2) || (dia <= 20 && mes == 3))
+                return "Piscis";
+
+            return "";
+        }
 
         private async void GetApi()
         {
@@ -186,25 +228,35 @@
 
         public void Validacion(Informacion info)
         {
-            string nombre = info.Nombres;
+            nombre = info.Nombres;
             string apellido = info.Apellido1 + " " + info.Apellido2;
             string fechadeNacimiento = info.FechaNacimiento;
-
-            paciente = new Paciente
-            {
-                Cedula = Cedula_,
-                Nombre = nombre,
-                Apellido = apellido,
-                FechaNacimiento = fechadeNacimiento,
-            };
-
+            DateTime birthday = DateTime.Parse(info.FechaNacimiento);
+            int dia = birthday.Day;
+            int mes = birthday.Month;
+            string zodiac = signo(dia, mes);
+                paciente = new Paciente
+                {
+                    Cedula = Cedula_,
+                    Nombre = nombre,
+                    Apellido = apellido,
+                    FechaNacimiento = fechadeNacimiento,
+                    FechaPrimeraVacuna = fechavacuna.ToString(),
+                    SignoDelZodiaco = zodiac
+                };
         }
         private void vacunadoValido()
         {
             if (newper)
             {
                 db.Add(paciente);
+            } else
+            {
+                var pers = db.Paciente.Where(p => p.Nombre == nombre).First();
+                pers.FechaSegundaVacuna = fechavacuna.ToString();
             }
+
 
             db.SaveChanges();
         } }}
+
