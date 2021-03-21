@@ -1,3 +1,72 @@
 @page "/Anulacion"
+@using Tarea7_Vacunas.Models
 
-<h1>Hello, world!</h1>
+<h1>Anulacion de las vacunas.</h1>
+<p>Aqui puede remover o recuperar a una persona de la base de datos. Esto alterara el cupo de las vacunas respectivamente.</p>
+
+<h2>Remover</h2>
+<p>Escriba el nombre de la persona aqui para removerla de la base de datos</p>
+<input @bind-value="@nombredel" />
+<button class="btn btn-danger" @onclick="BorrarPersona">Eliminar</button>
+@mensajedel
+
+<h2>Recuperar</h2>
+<p>Escriba el nombre de la persona aqui para recuperarla de la base de datos</p>
+<input @bind-value="@nombreres" />
+<button class="btn btn-success" @onclick="RecuperarPersona">Recuperar</button>
+@mensajeres
+
+@code {
+    public string nombredel;
+    public string nombreres;
+    public string mensajedel = "No se ha eliminado nadie.";
+    public string mensajeres = "No se ha recuperado nadie.";
+    registrovacunaContext db = new registrovacunaContext();
+
+    public void BorrarPersona()
+    {
+        var result = db.Paciente.SingleOrDefault(p => p.Nombre == nombredel);
+        if (result != null)
+        {
+            var removevac = db.Vacunas.SingleOrDefault(v => v.VacunasId == result.VacunasId);
+            if (removevac != null)
+            {
+                removevac.Cantidad = removevac.Cantidad + 1;
+                result.Estado = "Desactivado";
+                mensajedel = "Persona eliminada exitosamente.";
+            }
+            else
+            {
+                mensajedel = "Error encontrado en la vacuna.";
+            }
+            db.SaveChanges();
+        } else
+        {
+            mensajedel = "Error encontrado en la busqueda. Persona no encontrada.";
+        }
+    }
+    public void RecuperarPersona()
+    {
+        var result = db.Paciente.SingleOrDefault(p => p.Nombre == nombreres);
+        if (result != null)
+        {
+            var addvac = db.Vacunas.SingleOrDefault(v => v.VacunasId == result.VacunasId);
+            if (addvac != null)
+            {
+                addvac.Cantidad = addvac.Cantidad - 1;
+                result.Estado = "Activo";
+                mensajeres = "Persona recuperada exitosamente.";
+            }
+            else
+            {
+                mensajeres = "Error encontrado en la vacuna.";
+            }
+            db.SaveChanges();
+        }
+        else
+        {
+            mensajeres = "Error encontrado en la busqueda. Persona no encontrada.";
+        }
+    }
+}
+
